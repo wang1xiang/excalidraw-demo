@@ -1,8 +1,8 @@
 .one-excalidraw .excalidraw {
-  --color-primary: #faa2c1;
+  /* --color-primary: #faa2c1;
   --color-primary-darker: #f783ac;
   --color-primary-darkest: #e64980;
-  --color-primary-light: #fcc2d7;
+  --color-primary-light: #fcc2d7; */
 }
 .one-excalidraw .excalidraw button.custom-element {
   width: 2rem;

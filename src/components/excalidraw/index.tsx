@@ -1,6 +1,4 @@
 import {
-  LiveCollaborationTrigger,
-  WelcomeScreen,
   useHandleLibrary,
 } from '@excalidraw/excalidraw'
 import './index.css'
@@ -16,18 +14,18 @@ import {
   LibraryItems,
 } from '@excalidraw/excalidraw/types/types'
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types'
-import { debounce } from 'lodash'
 import { useImmer } from 'use-immer'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { changeFiles, ls } from './utils'
 import { db } from '../hooks/filesDB'
 import { EXCALIDRAW_ELEMENTS, FILES_STORE, LIBRARY_ELEMENTS } from './constants'
+import BasicWelcome from './BasicWelcome'
 
 let saveExcalidrawData: ExcalidrawDataType = {}
 
 const OneExcalidraw = () => {
   const UIOptions = {
-    canvasActions: { toggleTheme: false },
+    canvasActions: { toggleTheme: true },
     exportOpts: { renderCustomUI: '<div>123</div>' },
     dockedSidebarBreakpoint: 200,
   }
@@ -134,6 +132,7 @@ const OneExcalidraw = () => {
       >
         {Excalidraw ? (
           <Excalidraw
+            isCollaborating={true}
             UIOptions={UIOptions}
             langCode="zh-CN"
             initialData={initialData}
@@ -141,17 +140,10 @@ const OneExcalidraw = () => {
             ref={(api: ExcalidrawImperativeAPI) => setExcalidrawAPI(api)}
             onChange={onChange}
             onLibraryChange={onLibraryChange}
-            // renderTopRightUI={() => (
-            //   <LiveCollaborationTrigger
-            //     isCollaborating={true}
-            //     onSelect={() => {
-            //       window.alert('You clicked on collab button')
-            //     }}
-            //   />
-            // )}
+            
           >
-            {/* <BasicMainMenu /> */}
-            <WelcomeScreen />
+            <BasicMainMenu />
+            <BasicWelcome />
             <MobileFooter />
           </Excalidraw>
         ) : null}

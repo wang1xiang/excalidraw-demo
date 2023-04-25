@@ -3,6 +3,9 @@ import { MainMenu } from '@excalidraw/excalidraw'
 const BasicMainMenu = () => {
   return (
     <MainMenu>
+      <MainMenu.DefaultItems.LoadScene />
+      <MainMenu.DefaultItems.SaveAsImage />
+      <MainMenu.DefaultItems.ChangeCanvasBackground />
       <MainMenu.Group title="Excalidraw items">
         <MainMenu.DefaultItems.Socials />
         <MainMenu.DefaultItems.Export />

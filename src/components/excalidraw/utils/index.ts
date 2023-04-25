@@ -1,7 +1,6 @@
 import { BinaryFiles } from '@excalidraw/excalidraw/types/types'
 import { Files } from '../types'
 import ls from './localStorage'
-type StringType = { [props: string]: Files }
 
 /**
  *
