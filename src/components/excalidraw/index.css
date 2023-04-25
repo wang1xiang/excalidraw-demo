@@ -1,0 +1,16 @@
+.one-excalidraw .excalidraw {
+  --color-primary: #faa2c1;
+  --color-primary-darker: #f783ac;
+  --color-primary-darkest: #e64980;
+  --color-primary-light: #fcc2d7;
+}
+.one-excalidraw .excalidraw button.custom-element {
+  width: 2rem;
+  height: 2rem;
+  margin: 0 8px;
+}
+
+.one-excalidraw .excalidraw .custom-footer,
+.c.one-excalidraw .excalidraw .ustom-element {
+  padding: 0.1rem;
+}
