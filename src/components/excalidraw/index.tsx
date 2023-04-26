@@ -1,7 +1,7 @@
 import { useHandleLibrary } from '@excalidraw/excalidraw'
 import './index.css'
-import MobileFooter from './MobileFooter'
 import BasicMainMenu from './BasicMainMenu'
+import BasicWelcome from './BasicWelcome'
 import { useCallback, useEffect, useState } from 'react'
 import { ExcalidrawDataType } from './types'
 import {
@@ -15,22 +15,31 @@ import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types'
 import { useImmer } from 'use-immer'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { changeFiles, ls, db } from './utils'
-import { EXCALIDRAW_ELEMENTS, FILES_STORE, LIBRARY_ELEMENTS } from './constants'
-import BasicWelcome from './BasicWelcome'
+import {
+  DOCUMENT_LINK,
+  EXCALIDRAW_ELEMENTS,
+  FILES_STORE,
+  HELP_DOCUMENT_CLASS,
+  LIBRARY_ELEMENTS,
+  DEFAULT_STATE,
+  EXCALIDRAW_THEME,
+  EXCALIDRAW_BACKGROUND,
+} from './constants'
 
 let saveExcalidrawData: ExcalidrawDataType = {}
 
 const OneExcalidraw = () => {
-  const UIOptions = {
-    canvasActions: { toggleTheme: true },
-    exportOpts: { renderCustomUI: '<div>123</div>' },
-    dockedSidebarBreakpoint: 200,
-  }
+  const UIOptions = {}
 
   const allFiles = useLiveQuery(() => db[FILES_STORE].toArray(), [])
   const [initialData, setInitialData] = useImmer<ExcalidrawDataType>({
     elements: [],
-    appState: { isLoading: false },
+    appState: {
+      isLoading: false,
+      theme: ls.getItem(EXCALIDRAW_THEME),
+      viewBackgroundColor: ls.getItem(EXCALIDRAW_BACKGROUND),
+      ...DEFAULT_STATE,
+    },
     files: null,
   })
   useEffect(() => {
@@ -43,7 +52,6 @@ const OneExcalidraw = () => {
     })
   }, [setInitialData, allFiles])
 
-  const [viewModeEnabled, setViewModeEnabled] = useState(false)
   const [Excalidraw, setExcalidraw] = useState<any>(null)
   const renderEditor = useCallback((div: HTMLElement | null) => {
     if (!div) return
@@ -99,6 +107,10 @@ const OneExcalidraw = () => {
         }
       })
 
+      const { theme, viewBackgroundColor } = appState
+      ls.setItem(EXCALIDRAW_THEME, theme)
+      ls.setItem(EXCALIDRAW_BACKGROUND, viewBackgroundColor)
+
       const sceneElement = elements.filter((element) => !element.isDeleted)
       ls.setItem(EXCALIDRAW_ELEMENTS, sceneElement)
     },
@@ -119,6 +131,25 @@ const OneExcalidraw = () => {
       window.removeEventListener('beforeunload', saveData)
     }
   }, [])
+
+  useEffect(() => {
+    // 修改帮助文档地址
+    const handleChangeHREF = (target: HTMLElement) =>
+      target.setAttribute('href', DOCUMENT_LINK)
+    const handleHelpDocument = (e: MouseEvent) => {
+      const target = e.target as HTMLElement
+      const parent = target?.parentElement?.parentElement
+      if (target?.className === HELP_DOCUMENT_CLASS) {
+        handleChangeHREF(target)
+      } else if (parent?.className === HELP_DOCUMENT_CLASS) {
+        handleChangeHREF(parent)
+      }
+    }
+    window.addEventListener('click', handleHelpDocument)
+    return () => {
+      window.removeEventListener('click', handleHelpDocument)
+    }
+  }, [])
   return (
     <>
       <div
@@ -132,14 +163,12 @@ const OneExcalidraw = () => {
             UIOptions={UIOptions}
             langCode="zh-CN"
             initialData={initialData}
-            viewModeEnabled={viewModeEnabled}
             ref={(api: ExcalidrawImperativeAPI) => setExcalidrawAPI(api)}
             onChange={onChange}
             onLibraryChange={onLibraryChange}
           >
             <BasicMainMenu />
             <BasicWelcome />
-            <MobileFooter />
           </Excalidraw>
         ) : null}
       </div>

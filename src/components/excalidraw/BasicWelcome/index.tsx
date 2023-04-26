@@ -3,15 +3,15 @@ import { WelcomeScreen } from '@excalidraw/excalidraw'
 const BasicWelcome = () => {
   return (
     <WelcomeScreen>
+      <WelcomeScreen.Hints.HelpHint />
+      <WelcomeScreen.Hints.MenuHint />
+      <WelcomeScreen.Hints.ToolbarHint />
       <WelcomeScreen.Center>
-        <WelcomeScreen.Center.Logo />
         <WelcomeScreen.Center.Heading>
-          欢迎使用Excalidraw
+          欢迎使用白板
         </WelcomeScreen.Center.Heading>
         <WelcomeScreen.Center.Menu>
-          <WelcomeScreen.Center.MenuItemLink href="https://github.com/excalidraw/excalidraw">
-            GitHub
-          </WelcomeScreen.Center.MenuItemLink>
+          <WelcomeScreen.Center.MenuItemLoadScene />
           <WelcomeScreen.Center.MenuItemHelp />
         </WelcomeScreen.Center.Menu>
       </WelcomeScreen.Center>
