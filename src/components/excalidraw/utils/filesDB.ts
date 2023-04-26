@@ -1,6 +1,6 @@
 import Dexie, { Table } from 'dexie'
-import { FILES_STORE } from '../excalidraw/constants';
-import { Files } from '../excalidraw/types';
+import { FILES_STORE } from '../constants';
+import { Files } from '../types';
 
 export class FilesClassedDexie extends Dexie {
   [FILES_STORE]!: Table<Files>

@@ -14,6 +14,18 @@ const MobileFooter = () => {
         </button>
       </Footer>
     )
+  } else {
+    return (
+      <Footer>
+        <button
+          className="custom-footer"
+          style={{ marginLeft: '20px', height: '2rem' }}
+          onClick={() => alert('This is custom footer in mobile menu')}
+        >
+          custom footer
+        </button>
+      </Footer>
+    )
   }
   return null
 }

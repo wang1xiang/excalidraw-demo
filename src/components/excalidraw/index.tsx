@@ -1,10 +1,8 @@
-import {
-  useHandleLibrary,
-} from '@excalidraw/excalidraw'
+import { useHandleLibrary } from '@excalidraw/excalidraw'
 import './index.css'
 import MobileFooter from './MobileFooter'
 import BasicMainMenu from './BasicMainMenu'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { ExcalidrawDataType } from './types'
 import {
   AppState,
@@ -16,8 +14,7 @@ import {
 import { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types'
 import { useImmer } from 'use-immer'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { changeFiles, ls } from './utils'
-import { db } from '../hooks/filesDB'
+import { changeFiles, ls, db } from './utils'
 import { EXCALIDRAW_ELEMENTS, FILES_STORE, LIBRARY_ELEMENTS } from './constants'
 import BasicWelcome from './BasicWelcome'
 
@@ -72,42 +69,41 @@ const OneExcalidraw = () => {
     // 将提供的文件数据添加到缓存中存在的现有文件之上的 appState.files 缓存
     excalidrawAPI.addFiles(allFiles as BinaryFileData[])
   }, [excalidrawAPI, allFiles])
-  const debounceChange = (
-    elements: ExcalidrawElement[],
-    appState: AppState,
-    files: BinaryFiles
-  ) => {
-    saveExcalidrawData = {
-      elements,
-      appState,
-      files,
-    }
 
-    elements.forEach(async (element) => {
-      if (element.type === 'image') {
-        const { fileId = '', isDeleted } = element
-        const file = files[fileId as string]
-        if (!file) return
-        const isFileInStore = allFiles?.find((f) => f.id === fileId)
-
-        if (isFileInStore && isDeleted) await db[FILES_STORE].delete(file?.id)
-        if (!isFileInStore) {
-          const { id, created, dataURL, lastRetrieved, mimeType } = file
-          await db[FILES_STORE].add({
-            id,
-            created,
-            dataURL,
-            lastRetrieved,
-            mimeType,
-          })
-        }
+  const onChange = useCallback(
+    (elements: ExcalidrawElement[], appState: AppState, files: BinaryFiles) => {
+      saveExcalidrawData = {
+        elements,
+        appState,
+        files,
       }
-    })
 
-    const sceneElement = elements.filter((element) => !element.isDeleted)
-    ls.setItem(EXCALIDRAW_ELEMENTS, sceneElement)
-  }
-  const onChange = useCallback(debounceChange, [debounceChange, allFiles])
+      elements.forEach(async (element) => {
+        if (element.type === 'image') {
+          const { fileId = '', isDeleted } = element
+          const file = files[fileId as string]
+          if (!file) return
+          const isFileInStore = allFiles?.find((f) => f.id === fileId)
+
+          if (isFileInStore && isDeleted) await db[FILES_STORE].delete(file?.id)
+          if (!isFileInStore && !isDeleted) {
+            const { id, created, dataURL, lastRetrieved, mimeType } = file
+            await db[FILES_STORE].add({
+              id,
+              created,
+              dataURL,
+              lastRetrieved,
+              mimeType,
+            })
+          }
+        }
+      })
+
+      const sceneElement = elements.filter((element) => !element.isDeleted)
+      ls.setItem(EXCALIDRAW_ELEMENTS, sceneElement)
+    },
+    [allFiles]
+  )
   const onLibraryChange = useCallback(
     (items: LibraryItems) => ls.setItem(LIBRARY_ELEMENTS, items),
     []
@@ -140,7 +136,6 @@ const OneExcalidraw = () => {
             ref={(api: ExcalidrawImperativeAPI) => setExcalidrawAPI(api)}
             onChange={onChange}
             onLibraryChange={onLibraryChange}
-            
           >
             <BasicMainMenu />
             <BasicWelcome />

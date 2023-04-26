@@ -1,6 +1,7 @@
 import { BinaryFiles } from '@excalidraw/excalidraw/types/types'
 import { Files } from '../types'
 import ls from './localStorage'
+import { db } from './filesDB'
 
 /**
  *
@@ -8,7 +9,10 @@ import ls from './localStorage'
  * @param field 需要提取的字段
  * @returns 转换后的对象
  */
-const changeFiles = (arr: Files[] | undefined, field: string): BinaryFiles | null => {
+const changeFiles = (
+  arr: Files[] | undefined,
+  field: string
+): BinaryFiles | null => {
   const result: BinaryFiles = {}
   if (!arr) return null
   arr?.forEach((a) => {
@@ -17,4 +21,4 @@ const changeFiles = (arr: Files[] | undefined, field: string): BinaryFiles | nul
   })
   return result
 }
-export { ls, changeFiles }
+export { ls, db, changeFiles }
